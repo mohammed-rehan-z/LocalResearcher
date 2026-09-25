@@ -1,36 +1,41 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
 });
 
 export const metadata = {
-  title: "ScholarSync - Academic Intelligence Platform",
+  title: "LocalResearcher - Academic Intelligence Platform",
   description: "A decentralized academic intelligence platform designed for deep literature synthesis.",
 };
 
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "./theme-provider";
+import { Footer } from "../components/footer";
+import { MotionProvider } from "./motion-provider";
 
 export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
+      className={`${inter.variable} ${playfair.variable} antialiased min-h-screen`}
       suppressHydrationWarning
     >
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
       </head>
-      <body className="font-body-md text-body-md min-h-screen flex flex-col relative overflow-x-hidden bg-background text-foreground">
+      <body className="font-body-md text-body-md min-h-screen flex flex-col relative bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          {children}
+          <MotionProvider>
+            {children}
+            <Footer />
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>

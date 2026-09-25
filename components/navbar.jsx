@@ -6,7 +6,7 @@ import { PenTool, Search, Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
   { id: "scraper",    label: "Research",     alwaysVisible: true },
-  { id: "summarizer", label: "Intelligence", alwaysVisible: true },
+  { id: "summarizer", label: "Intelligence", alwaysVisible: false },
   { id: "dashboard",  label: "Library",      alwaysVisible: true },
   { id: "tabular",    label: "Archive",      alwaysVisible: true },
   { id: "settings",   label: "Settings",     alwaysVisible: true },
@@ -19,12 +19,12 @@ export function Navbar({ activeView, setActiveView, activePaper, onUploadClick }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center items-center pointer-events-none p-4">
-      <div className="pointer-events-auto bg-surface-container/80 backdrop-blur-md rounded-full mt-4 mx-auto w-fit px-6 py-2 border border-outline flex items-center gap-8 transition-all duration-300 ease-in-out shadow-sm">
+      <div className="pointer-events-auto /80 bg-surface-container-low/80 backdrop-blur-2xl rounded-full mt-4 mx-auto w-fit px-6 py-2 border border-outline flex items-center gap-8 transition-all duration-300 ease-in-out shadow-sm">
         <span 
-          className="font-headline-sm text-headline-sm font-bold tracking-tighter text-primary cursor-pointer"
+          className="font-serif text-xl font-bold tracking-tighter text-primary cursor-pointer"
           onClick={() => setActiveView("overview")}
         >
-          ScholarSync
+          LocalResearcher
         </span>
         <div className="hidden md:flex gap-6 items-center">
           {visibleLinks.map((link) => {
@@ -32,10 +32,10 @@ export function Navbar({ activeView, setActiveView, activePaper, onUploadClick }
             return (
               <button
                 key={link.id}
-                className={`font-label-md text-label-md uppercase tracking-wider transition-colors ${
+                className={`font-sans text-[11px] uppercase tracking-wider transition-colors ${
                   isActive 
-                    ? "text-primary font-bold border-b border-primary pb-1" 
-                    : "text-on-surface-variant hover:text-primary"
+                    ? "text-primary font-bold border-b border-black border-white pb-1" 
+                    : "text-on-surface-variant hover: hover:text-white"
                 }`}
                 onClick={() => setActiveView(link.id)}
               >
@@ -45,7 +45,7 @@ export function Navbar({ activeView, setActiveView, activePaper, onUploadClick }
           })}
         </div>
         <button 
-          className="bg-accent text-on-secondary-fixed font-label-md text-label-md uppercase tracking-wider px-4 py-1.5 rounded-full hover:bg-opacity-90 transition-opacity"
+          className="bg-[#38bdf8] text-white font-sans text-[11px] font-bold uppercase tracking-wider px-5 py-2 rounded-full hover:opacity-90 transition-opacity"
           onClick={onUploadClick}
         >
           {activeView === "settings" ? "Connect Identity" : "Upload Document"}

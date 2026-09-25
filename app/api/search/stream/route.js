@@ -2,12 +2,15 @@ import { SCRAPER_MAP } from "@/lib/scraper";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const keywords = searchParams.get('keywords');
+  const title = searchParams.get('title') || '';
+  const tagsStr = searchParams.get('tags') || '';
+  const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [];
+  const timeline = searchParams.get('timeline') || '';
   const source = searchParams.get('source');
   const limit = searchParams.get('limit') || 1000;
 
-  if (!keywords || !source) {
-    return new Response(JSON.stringify({ error: 'Missing keywords or source.' }), {
+  if (!title && tags.length === 0) {
+    return new Response(JSON.stringify({ error: 'Missing title or tags.' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     });
@@ -41,7 +44,8 @@ export async function GET(request) {
             const scraper = SCRAPER_MAP[src];
             if (!scraper) return;
             
-            await scraper(keywords, parseInt(limit), (resultsBatch) => {
+            const options = { title, tags, timeline };
+            await scraper(options, parseInt(limit), (resultsBatch) => {
               totalResults += resultsBatch.length;
               try {
                 controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'results', data: resultsBatch })}\n\n`));

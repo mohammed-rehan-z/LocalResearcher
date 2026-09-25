@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>localresearcher — Deterministic Academic RAG for Node.js &amp; TypeScript</title>
+<!-- Typography: Geist, JetBrains Mono, Georgia is system default -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Forms & Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Design System Tailwind Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-low": "#f4f3f1",
+            "outline-variant": "#e2bfb0",
+            "surface-variant": "#e3e2e0",
+            "on-secondary": "#ffffff",
+            "outline": "#d1d5db",
+            "primary-fixed": "#ffdbcc",
+            "on-error": "#ffffff",
+            "surface-container": "#efeeec",
+            "on-primary-container": "#572000",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed-variant": "#004e5c",
+            "on-error-container": "#93000a",
+            "surface-container-highest": "#e1e0de",
+            "inverse-primary": "#ffb693",
+            "surface-dim": "#e5e4e2",
+            "on-primary": "#ffffff",
+            "inverse-surface": "#2f3130",
+            "tertiary-container": "#67e8f9",
+            "on-background": "#1a1c1b",
+            "surface-container-high": "#e9e8e6",
+            "secondary-fixed": "#e5e2e1",
+            "secondary-fixed-dim": "#c9c6c5",
+            "surface-tint": "#a04100",
+            "on-secondary-fixed": "#1c1b1b",
+            "surface": "#f5f4f2",
+            "primary-container": "#ff8a33",
+            "on-secondary-container": "#656464",
+            "on-surface-variant": "#4b5563",
+            "on-primary-fixed": "#351000",
+            "tertiary-fixed-dim": "#4cd7f6",
+            "error-container": "#fecaca",
+            "on-tertiary-container": "#003641",
+            "on-primary-fixed-variant": "#7a3000",
+            "tertiary": "#06b6d4",
+            "background": "#faf9f7",
+            "secondary-container": "#e5e2e1",
+            "on-surface": "#1a1c1b",
+            "on-tertiary-fixed": "#001f26",
+            "surface-bright": "#ffffff",
+            "on-secondary-fixed-variant": "#474646",
+            "surface-container-lowest": "#ffffff",
+            "primary": "#ff6b00",
+            "secondary": "#0a0a0a",
+            "error": "#ef4444",
+            "primary-fixed-dim": "#ffb693",
+            "tertiary-fixed": "#acedff",
+            "inverse-on-surface": "#f1f1ef"
+          },
+          borderRadius: {
+            "DEFAULT": "1rem",
+            "lg": "2rem",
+            "xl": "3rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "space-xl": "2rem",
+            "space-sm": "0.5rem",
+            "gutter": "1.5rem",
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "space-4xl": "6rem",
+            "margin": "2rem",
+            "space-lg": "1.5rem"
+          },
+          fontFamily: {
+            "headline-lg": ["Georgia, serif"],
+            "code-inline": ["'JetBrains Mono'", "monospace"],
+            "display-hero": ["'Geist'", "sans-serif"],
+            "body-lg": ["'Geist'", "sans-serif"]
+          },
+          fontSize: {
+            "headline-lg": [
+              "32px",
+              {
+                "lineHeight": "40px",
+                "letterSpacing": "-0.01em",
+                "fontWeight": "400"
+              }
+            ],
+            "code-inline": [
+              "14px",
+              {
+                "lineHeight": "20px",
+                "letterSpacing": "0em",
+                "fontWeight": "500"
+              }
+            ],
+            "display-hero": [
+              "64px",
+              {
+                "lineHeight": "72px",
+                "letterSpacing": "-0.04em",
+                "fontWeight": "600"
+              }
+            ],
+            "body-lg": [
+              "16px",
+              {
+                "lineHeight": "26px",
+                "letterSpacing": "-0.005em",
+                "fontWeight": "400"
+              }
+            ]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    ::selection {
+      background-color: #ff6b00;
+      color: #ffffff;
+    }
+    .whisper-shadow {
+      box-shadow: 0 4px 24px -2px rgba(10, 10, 10, 0.04), 0 1px 2px 0 rgba(10, 10, 10, 0.02);
+    }
+    .whisper-border {
+      border: 1px solid rgba(209, 213, 219, 0.7);
+    }
+    .glass-canvas {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body-lg text-body-lg antialiased min-h-screen selection:bg-primary selection:text-on-primary">
+<!-- Shared Component: TopNavBar -->
+<header class="bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md docked full-width top-0 sticky z-50 border-b border-outline dark:border-on-surface-variant/20">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-6 py-4 w-full">
+<!-- Brand & Version -->
+<div class="flex items-center gap-3">
+<a class="font-display-hero text-headline-lg tracking-tight font-bold text-secondary dark:text-on-secondary flex items-center gap-2" href="#">
+          localresearcher
+        </a>
+<span class="font-code-inline text-[11px] px-2 py-0.5 rounded-full bg-surface-container border border-outline text-on-surface-variant font-medium">
+          v2.4.0
+        </span>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-8 text-[15px]">
+<!-- Active link: Docs -->
+<a class="text-secondary dark:text-on-secondary font-medium border-b-2 border-primary pb-1 font-body-lg" href="#docs">Docs</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-secondary dark:hover:text-on-secondary font-normal transition-colors font-body-lg" href="#benchmarks">Benchmarks</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-secondary dark:hover:text-on-secondary font-normal transition-colors font-body-lg" href="#architecture">Architecture</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-secondary dark:hover:text-on-secondary font-normal transition-colors font-body-lg" href="#changelog">Changelog</a>
+</nav>
+<!-- Trailing Action Cluster -->
+<div class="flex items-center gap-3">
+<a class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-outline bg-surface-bright text-secondary hover:border-secondary transition-colors font-code-inline text-code-inline" href="https://github.com" rel="noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span>GitHub</span>
+<span class="text-on-surface-variant text-xs">4.8k★</span>
+</a>
+<a class="inline-flex items-center justify-center px-4 py-1.5 rounded-lg bg-secondary text-on-secondary font-medium font-body-lg text-sm hover:bg-secondary/90 active:-translate-y-px transition-transform duration-100" href="#get-started">
+          Get Started
+        </a>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 pt-16 pb-24 flex flex-col gap-24">
+<!-- 1. Hero Section -->
+<section class="flex flex-col items-start max-w-4xl pt-6">
+<!-- Minimalist Eyebrow Pill -->
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container border border-outline text-secondary text-xs font-code-inline mb-8">
+<span class="w-2 h-2 rounded-full bg-primary inline-block animate-pulse"></span>
+<span>TypeScript 5.4</span>
+<span class="text-outline">/</span>
+<span>Deterministic Academic RAG</span>
+<span class="text-outline">/</span>
+<span class="text-on-surface-variant">Zero Hallucination</span>
+</div>
+<!-- Main Headline: Geist Display Hero -->
+<h1 class="font-display-hero text-display-hero tracking-tight text-secondary max-w-3xl mb-6 leading-[1.08]">
+        The research-grade RAG engine for Node.js &amp; TypeScript
+      </h1>
+<!-- Editorial Subheadline: Georgia Serif -->
+<p class="font-headline-lg text-headline-lg text-on-surface-variant max-w-2xl mb-10 leading-relaxed font-normal">
+        Transform unformatted arXiv preprints, dense mathematical equations, and complex citation lineages into deterministic vector embeddings with mathematical proof anchors.
+      </p>
+<!-- Copy-to-Clipboard Command Bar & Package Managers -->
+<div class="w-full max-w-xl bg-surface-bright rounded-xl whisper-border whisper-shadow p-2 mb-8">
+<div class="flex items-center justify-between border-b border-outline/40 px-3 pb-2 pt-1 mb-2">
+<div class="flex items-center gap-4 text-xs font-code-inline text-on-surface-variant" id="pkg-tabs">
+<button class="text-secondary font-semibold border-b border-secondary pb-0.5" id="tab-npm" onclick="setPkg('npm')">npm</button>
+<button class="hover:text-secondary pb-0.5" id="tab-pnpm" onclick="setPkg('pnpm')">pnpm</button>
+<button class="hover:text-secondary pb-0.5" id="tab-bun" onclick="setPkg('bun')">bun</button>
+</div>
+<span class="font-code-inline text-[11px] text-on-surface-variant tracking-wide">14.2 kB minzipped • Zero native deps</span>
+</div>
+<div class="flex items-center justify-between px-3 py-1 font-code-inline text-sm">
+<div class="flex items-center gap-2">
+<span class="text-primary font-bold select-none">$</span>
+<span class="text-secondary selection:bg-primary" id="install-command">npm i localresearcher</span>
+</div>
+<button class="text-xs px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-highest text-secondary border border-outline flex items-center gap-1 active:-translate-y-px transition-all" id="copy-btn" onclick="copyCommand()">
+<span class="material-symbols-outlined text-sm">content_copy</span>
+<span id="copy-label">Copy</span>
+</button>
+</div>
+</div>
+<!-- Action Cluster -->
+<div class="flex flex-wrap items-center gap-4">
+<a class="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-secondary text-on-secondary font-medium font-body-lg text-sm hover:bg-secondary/90 active:-translate-y-px transition-all" href="#docs">
+          Read the Documentation
+        </a>
+<a class="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-surface-bright border border-outline text-secondary font-medium font-body-lg text-sm hover:border-secondary active:-translate-y-px transition-all" href="#benchmarks">
+          View GitHub Benchmark
+        </a>
+</div>
+</section>
+<!-- 2. Asymmetric Code & Execution Terminal -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+<!-- Left: Obsidian Execution Terminal (Span 7) -->
+<div class="lg:col-span-7 bg-[#0d0f11] rounded-2xl p-6 border border-outline/20 whisper-shadow flex flex-col justify-between overflow-hidden text-neutral-100">
+<div>
+<!-- Terminal Header -->
+<div class="flex items-center justify-between pb-4 mb-4 border-b border-neutral-800 text-xs font-code-inline text-neutral-400">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-neutral-800"></span>
+<span class="w-3 h-3 rounded-full bg-neutral-800"></span>
+<span class="w-3 h-3 rounded-full bg-neutral-800"></span>
+<span class="ml-2 text-neutral-300 font-mono">pipeline.ts</span>
+</div>
+<span class="text-neutral-500 font-mono text-[11px]">Strict Proof Engine</span>
+</div>
+<!-- Code Snippet -->
+<pre class="font-code-inline text-code-inline leading-6 text-neutral-300 overflow-x-auto"><code><span class="text-neutral-500">// Initialize lossless arXiv ingestion pipeline</span>
+<span class="text-primary">import</span> { <span class="text-amber-200">LocalResearcher</span> } <span class="text-primary">from</span> <span class="text-stone-300">'localresearcher'</span>;
+
+<span class="text-neutral-500">// Deterministic AST parser configuration</span>
+<span class="text-primary">const</span> scholar = <span class="text-primary">new</span> <span class="text-amber-200">LocalResearcher</span>({
+  strictCitation: <span class="text-orange-400">true</span>,
+  mathPreservation: <span class="text-stone-300">'latex'</span>,
+  canonicalAnchor: <span class="text-stone-300">'sha256'</span>
+});
+
+<span class="text-neutral-500">// Ingest preprint &amp; build cryptographic lineage</span>
+<span class="text-primary">const</span> doc = <span class="text-primary">await</span> scholar.<span class="text-amber-200">ingest</span>(<span class="text-stone-300">'arxiv:2403.11903'</span>);
+<span class="text-primary">const</span> proofTree = <span class="text-primary">await</span> doc.<span class="text-amber-200">extractTheorems</span>();</code></pre>
+</div>
+<div class="pt-6 mt-6 border-t border-neutral-800/80 flex items-center justify-between text-xs font-code-inline text-neutral-400">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>Runtime: Node.js 20.x ESM (Native Float32Array)</span>
+</div>
+<span class="text-neutral-500 font-mono">Status: Ready (0 errors)</span>
+</div>
+</div>
+<!-- Right: Stone Clean Telemetry & Lossless Preview Pane (Span 5) -->
+<div class="lg:col-span-5 bg-surface-bright rounded-2xl p-6 whisper-border whisper-shadow flex flex-col justify-between">
+<div>
+<!-- Pane Header -->
+<div class="flex items-center justify-between pb-3 mb-4 border-b border-outline/50">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-xs font-code-inline text-secondary font-semibold">Lossless AST Output</span>
+</div>
+<span class="text-xs font-code-inline text-on-surface-variant">arxiv:2403.11903 (p. 4)</span>
+</div>
+<!-- Parsed Equation Block -->
+<div class="mb-4">
+<span class="text-[11px] font-code-inline text-on-surface-variant block mb-1.5">RECOVERED LATEX EQUATION (NODE #14)</span>
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline font-code-inline text-xs text-secondary overflow-x-auto">
+              \mathcal{L}_{RAG}(\theta) = \mathbb{E}_{q \sim Q} \left[ -\log P(a \mid q, \mathcal{K}_{\text{provenance}}) \right]
+            </div>
+</div>
+<!-- Cryptographic SHA-256 byte anchor -->
+<div class="mb-4">
+<span class="text-[11px] font-code-inline text-on-surface-variant block mb-1.5">CRYPTOGRAPHIC BYTE-ANCHOR (SHA-256)</span>
+<div class="p-2.5 bg-surface-container-low rounded-lg border border-outline font-code-inline text-[12px] text-secondary flex items-center justify-between">
+<span class="truncate">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</span>
+<span class="material-symbols-outlined text-sm text-on-surface-variant ml-2">verified</span>
+</div>
+</div>
+<!-- Citation Lineage Metadata -->
+<div class="space-y-2 text-xs font-code-inline text-on-surface-variant">
+<div class="flex justify-between py-1 border-b border-outline/30">
+<span>Theorem Boundary</span>
+<span class="text-secondary font-medium">Lemma 3.2 (Optimization Bound)</span>
+</div>
+<div class="flex justify-between py-1 border-b border-outline/30">
+<span>Source Coordinates</span>
+<span class="text-secondary font-medium">Col 2, Para 4, Byte 8,421–9,004</span>
+</div>
+</div>
+</div>
+<!-- Telemetry Metrics footer -->
+<div class="pt-4 border-t border-outline/40 grid grid-cols-2 gap-3 mt-4">
+<div class="p-2 bg-surface-container-low rounded border border-outline">
+<div class="text-[11px] font-code-inline text-on-surface-variant">PARSE LATENCY</div>
+<div class="font-code-inline text-secondary font-bold text-base">42ms</div>
+</div>
+<div class="p-2 bg-surface-container-low rounded border border-outline">
+<div class="text-[11px] font-code-inline text-on-surface-variant">CITATION FIDELITY</div>
+<div class="font-code-inline text-secondary font-bold text-base">99.4%</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Architectural Metric Telemetry Strip -->
+<section class="whisper-border bg-surface-bright rounded-2xl p-6 whisper-shadow">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-outline">
+<div class="flex flex-col px-4 pt-2 md:pt-0">
+<span class="font-display-hero text-3xl font-bold text-secondary tracking-tight">99.4%</span>
+<span class="text-xs font-code-inline text-secondary font-medium mt-1">Citation Fidelity</span>
+<span class="text-[11px] text-on-surface-variant mt-0.5 font-body-lg">50,000+ arXiv preprints verified</span>
+</div>
+<div class="flex flex-col px-4 pt-4 md:pt-0">
+<span class="font-display-hero text-3xl font-bold text-secondary tracking-tight">120M+</span>
+<span class="text-xs font-code-inline text-secondary font-medium mt-1">Cross-Corpus Nodes</span>
+<span class="text-[11px] text-on-surface-variant mt-0.5 font-body-lg">Indexed across PubMed, arXiv, IEEE</span>
+</div>
+<div class="flex flex-col px-4 pt-4 md:pt-0">
+<span class="font-display-hero text-3xl font-bold text-secondary tracking-tight">42ms</span>
+<span class="text-xs font-code-inline text-secondary font-medium mt-1">p95 Latency</span>
+<span class="text-[11px] text-on-surface-variant mt-0.5 font-body-lg">Optimized quantized vector SIMD</span>
+</div>
+<div class="flex flex-col px-4 pt-4 md:pt-0">
+<span class="font-display-hero text-3xl font-bold text-secondary tracking-tight">100%</span>
+<span class="text-xs font-code-inline text-secondary font-medium mt-1">Lossless Math AST</span>
+<span class="text-[11px] text-on-surface-variant mt-0.5 font-body-lg">Direct KaTeX equation extraction</span>
+</div>
+</div>
+</section>
+<!-- 4. Asymmetric Bento Grid: Engineered for Academic Rigor -->
+<section class="flex flex-col gap-6" id="architecture">
+<div class="flex flex-col max-w-xl">
+<span class="text-xs font-code-inline text-primary uppercase tracking-wider font-semibold">Engine Architecture</span>
+<h2 class="font-display-hero text-3xl font-bold text-secondary tracking-tight mt-1">
+          Designed for the rigors of peer review
+        </h2>
+<p class="font-body-lg text-on-surface-variant text-sm mt-2">
+          Eliminating stochastic parsing guesswork. localresearcher treats scientific literature as structured mathematical graphs rather than unstructured text blobs.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Card 1: Math & LaTeX PDF Deconstruction (Span 8) -->
+<div class="md:col-span-8 bg-surface-bright rounded-2xl p-8 whisper-border whisper-shadow flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="px-2.5 py-1 rounded bg-surface-container border border-outline text-[11px] font-code-inline text-secondary">
+                CORE PIPELINE
+              </span>
+<span class="text-xs font-code-inline text-on-surface-variant">AST Graph Traversal</span>
+</div>
+<h3 class="font-display-hero text-2xl font-bold text-secondary tracking-tight mb-2">
+              Mathematical &amp; LaTeX PDF Deconstruction
+            </h3>
+<p class="text-on-surface-variant font-body-lg text-sm max-w-xl leading-relaxed mb-6">
+              Standard OCR collapses superscripts, fractions, and matrices into chaotic character noise. localresearcher reconstructs native multi-column layout geometry into canonical LaTeX equations without character deformation.
+            </p>
+<!-- Visual Equation Box -->
+<div class="p-4 bg-surface-container-low rounded-xl border border-outline space-y-3 font-code-inline text-xs">
+<div class="flex items-center justify-between text-on-surface-variant border-b border-outline/50 pb-2">
+<span>Input: Multi-column PDF Vector Stream</span>
+<span class="text-primary font-medium">Confidence: 99.98%</span>
+</div>
+<div class="text-secondary overflow-x-auto py-1">
+                \[ f(x) = \frac{1}{\sigma \sqrt{2\pi}} \exp\left( -\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2 \right) \]
+              </div>
+<div class="flex items-center gap-4 text-[11px] text-on-surface-variant pt-2 border-t border-outline/50">
+<span>Symbol Density: 48 tokens</span>
+<span>Matrix Dimensions: Preserved</span>
+<span>Tree Depth: 4 levels</span>
+</div>
+</div>
+</div>
+<div class="pt-6 mt-6 border-t border-outline/40 flex items-center justify-between text-xs font-code-inline text-on-surface-variant">
+<span>Module: <code class="text-secondary font-semibold">@localresearcher/latex-ast</code></span>
+<span class="text-secondary">Zero Tesseract dependency</span>
+</div>
+</div>
+<!-- Card 2: Zero-Config Academic Chunking (Span 4) -->
+<div class="md:col-span-4 bg-surface-bright rounded-2xl p-8 whisper-border whisper-shadow flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="px-2.5 py-1 rounded bg-surface-container border border-outline text-[11px] font-code-inline text-secondary">
+                SEMANTIC CHUNKER
+              </span>
+</div>
+<h3 class="font-display-hero text-xl font-bold text-secondary tracking-tight mb-2">
+              Zero-Config Academic Chunking
+            </h3>
+<p class="text-on-surface-variant font-body-lg text-sm leading-relaxed mb-4">
+              Arbitrary 512-token chunks sever proof statements. localresearcher enforces semantic cuts on theorem, lemma, and proposition boundaries.
+            </p>
+<ul class="space-y-2 text-xs font-code-inline text-on-surface-variant">
+<li class="flex items-center gap-2 p-2 rounded bg-surface-container-low border border-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>Proof context preserved</span>
+</li>
+<li class="flex items-center gap-2 p-2 rounded bg-surface-container-low border border-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>Footnotes unified inline</span>
+</li>
+<li class="flex items-center gap-2 p-2 rounded bg-surface-container-low border border-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>BibTeX references resolved</span>
+</li>
+</ul>
+</div>
+<div class="pt-4 border-t border-outline/40 text-xs font-code-inline text-on-surface-variant">
+<span>AST Boundary Splitter</span>
+</div>
+</div>
+<!-- Card 3: Deterministic Provenance Verification (Span 5) -->
+<div class="md:col-span-5 bg-surface-bright rounded-2xl p-8 whisper-border whisper-shadow flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="px-2.5 py-1 rounded bg-surface-container border border-outline text-[11px] font-code-inline text-secondary">
+                PROVENANCE
+              </span>
+<span class="text-xs font-code-inline text-primary">SHA-256 Validated</span>
+</div>
+<h3 class="font-display-hero text-xl font-bold text-secondary tracking-tight mb-2">
+              Deterministic Byte-Level Provenance
+            </h3>
+<p class="text-on-surface-variant font-body-lg text-sm leading-relaxed mb-4">
+              Every retrieved vector embedding contains immutable cryptographic coordinates: physical page offset, bounding box coordinates, and raw source hash.
+            </p>
+<div class="p-3 bg-surface-container-low rounded border border-outline font-code-inline text-xs text-secondary space-y-1">
+<div><span class="text-on-surface-variant">chunk.hash:</span> <span class="text-primary font-bold">0x89f2a7...</span></div>
+<div><span class="text-on-surface-variant">source.page:</span> 12</div>
+<div><span class="text-on-surface-variant">bbox:</span> [142.4, 204.1, 480.0, 310.8]</div>
+</div>
+</div>
+<div class="pt-4 border-t border-outline/40 text-xs font-code-inline text-on-surface-variant">
+<span>Verifiable audit trail for AI output</span>
+</div>
+</div>
+<!-- Card 4: Model Agnostic Adapters (Span 3) -->
+<div class="md:col-span-3 bg-surface-bright rounded-2xl p-8 whisper-border whisper-shadow flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="px-2.5 py-1 rounded bg-surface-container border border-outline text-[11px] font-code-inline text-secondary">
+                ADAPTERS
+              </span>
+</div>
+<h3 class="font-display-hero text-xl font-bold text-secondary tracking-tight mb-2">
+              Model Agnostic
+            </h3>
+<p class="text-on-surface-variant font-body-lg text-sm leading-relaxed mb-4">
+              Optimized token budgets for Claude 3.5 Sonnet, DeepSeek-R1, and local Ollama weights.
+            </p>
+<div class="space-y-1.5 text-xs font-code-inline text-secondary">
+<div class="px-2 py-1 bg-surface-container-low rounded border border-outline">Claude 3.5 Sonnet</div>
+<div class="px-2 py-1 bg-surface-container-low rounded border border-outline">DeepSeek-R1 / Qwen</div>
+<div class="px-2 py-1 bg-surface-container-low rounded border border-outline">Local Ollama Weights</div>
+</div>
+</div>
+<div class="pt-4 border-t border-outline/40 text-xs font-code-inline text-on-surface-variant">
+<span>JSON-LD Output Format</span>
+</div>
+</div>
+<!-- Card 5: Instant arXiv & IPFS Ingestion (Span 4) -->
+<div class="md:col-span-4 bg-surface-bright rounded-2xl p-8 whisper-border whisper-shadow flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="px-2.5 py-1 rounded bg-surface-container border border-outline text-[11px] font-code-inline text-secondary">
+                NETWORK RESOLVER
+              </span>
+</div>
+<h3 class="font-display-hero text-xl font-bold text-secondary tracking-tight mb-2">
+              Instant arXiv &amp; IPFS Ingestion
+            </h3>
+<p class="text-on-surface-variant font-body-lg text-sm leading-relaxed mb-4">
+              Single-call resolution from arXiv identifiers, digital object identifiers (DOIs), or decentralized IPFS CIDs.
+            </p>
+<div class="p-3 bg-surface-container-low rounded border border-outline font-code-inline text-xs text-secondary overflow-x-auto">
+<span class="text-primary">await</span> scholar.<span class="text-secondary font-bold">resolve</span>(<br/>
+                <span class="text-stone-600">'doi:10.1145/3318464'</span><br/>
+              );
+            </div>
+</div>
+<div class="pt-4 border-t border-outline/40 text-xs font-code-inline text-on-surface-variant">
+<span>Built-in caching &amp; offline mirrors</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. Developer Comparison Section -->
+<section class="flex flex-col gap-6" id="benchmarks">
+<div class="flex flex-col max-w-xl">
+<span class="text-xs font-code-inline text-primary uppercase tracking-wider font-semibold">Engineering Comparison</span>
+<h2 class="font-display-hero text-3xl font-bold text-secondary tracking-tight mt-1">
+          Stop stitching fragile OCR scripts
+        </h2>
+<p class="font-body-lg text-on-surface-variant text-sm mt-2">
+          Compare 80+ lines of fragile regular expressions and severed equations against clean TypeScript determinism.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+<!-- Legacy Approach -->
+<div class="bg-surface-bright rounded-2xl p-6 whisper-border whisper-shadow flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 mb-4 border-b border-outline/40 text-xs font-code-inline">
+<span class="text-error font-medium flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">close</span>
+                Legacy Multi-tool Pipeline
+              </span>
+<span class="text-on-surface-variant font-mono">80+ lines of glue</span>
+</div>
+<pre class="font-code-inline text-xs leading-5 text-on-surface-variant overflow-x-auto bg-surface-container-low p-4 rounded-xl border border-outline"><code><span class="text-neutral-400">// Fragile PyMuPDF + Tesseract + regex glue</span>
+const pdf = await pdfParser.extract(file);
+const rawText = pdf.pages.map(p =&gt; p.text).join('');
+
+<span class="text-neutral-400">// Broken math: superscripts turned into random digits</span>
+const cleaned = rawText.replace(/[\r\n]+/g, ' ')
+  .replace(/([a-z])- ([a-z])/g, '$1$2');
+
+<span class="text-neutral-400">// Arbitrary character chunking cuts formulas in half</span>
+const chunks = chunkByTokens(cleaned, 512, 50);
+
+<span class="text-neutral-400">// Hallucinated citations without byte coordinates</span>
+const embeddings = await model.embed(chunks);
+<span class="text-error font-semibold">// Result: Corrupted math, severed proof context, no audit link</span></code></pre>
+</div>
+<div class="pt-4 mt-4 border-t border-outline/40 text-xs font-code-inline text-error flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">warning</span>
+<span>High hallucination risk in math and citations</span>
+</div>
+</div>
+<!-- ScholorSync Approach -->
+<div class="bg-surface-bright rounded-2xl p-6 whisper-border border-l-4 border-l-primary whisper-shadow flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 mb-4 border-b border-outline/40 text-xs font-code-inline">
+<span class="text-secondary font-bold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-primary">check</span>
+                localresearcher v2.4.0
+              </span>
+<span class="text-primary font-mono font-medium">5 clean lines</span>
+</div>
+<pre class="font-code-inline text-xs leading-5 text-secondary overflow-x-auto bg-surface-container-low p-4 rounded-xl border border-outline"><code><span class="text-on-surface-variant">// Single unified, deterministic academic ingest</span>
+import { LocalResearcher } from 'localresearcher';
+
+const scholar = new LocalResearcher({ strictCitation: true });
+const paper = await scholar.ingest('arxiv:2403.11903');
+const nodes = await paper.toDeterministicNodes();
+
+<span class="text-on-surface-variant">// Output: Perfectly structured LaTeX AST chunks</span>
+<span class="text-on-surface-variant">// Each node includes cryptographic sha-256 byte anchors</span>
+console.log(nodes[0].provenance.coordinates);</code></pre>
+</div>
+<div class="pt-4 mt-4 border-t border-outline/40 text-xs font-code-inline text-secondary flex items-center gap-2 font-medium">
+<span class="material-symbols-outlined text-sm text-primary">verified</span>
+<span>Deterministic SHA-256 proof anchor per claim</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. Call to Action Card -->
+<section class="bg-surface-bright rounded-2xl p-10 md:p-12 whisper-border whisper-shadow" id="get-started">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
+<div class="max-w-xl">
+<span class="text-xs font-code-inline text-primary uppercase tracking-wider font-semibold">Production Ready</span>
+<h2 class="font-display-hero text-3xl font-bold text-secondary tracking-tight mt-1 mb-3">
+            Start synthesizing preprints deterministically today
+          </h2>
+<p class="font-body-lg text-on-surface-variant text-sm leading-relaxed">
+            Integrate <code class="font-code-inline text-secondary bg-surface-container px-1.5 py-0.5 rounded text-xs">localresearcher</code> in your Node.js or TypeScript codebase in under two minutes. Licensed under MIT for commercial and research applications.
+          </p>
+<div class="mt-4 flex items-center gap-4 text-xs font-code-inline text-on-surface-variant">
+<span>• MIT Licensed</span>
+<span>• Node.js ≥ 18.0.0</span>
+<span>• TypeScript 5.x</span>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-4 shrink-0">
+<a class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-lg bg-secondary text-on-secondary font-medium font-body-lg text-sm hover:bg-secondary/90 active:-translate-y-px transition-all text-center" href="#docs">
+            Read Documentation
+          </a>
+<a class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-lg bg-surface-container border border-outline text-secondary font-medium font-body-lg text-sm hover:border-secondary active:-translate-y-px transition-all text-center" href="https://github.com" rel="noreferrer" target="_blank">
+            Clone Repo (GitHub)
+          </a>
+</div>
+</div>
+</section>
+</main>
+<!-- Shared Component: Footer -->
+<footer class="bg-surface-container-low dark:bg-inverse-surface border-t border-outline dark:border-on-surface-variant/20">
+<div class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-6 py-12 w-full gap-6">
+<!-- Wordmark & Copyright -->
+<div class="flex flex-col items-center md:items-start gap-1">
+<span class="font-display-hero text-headline-lg font-bold text-secondary dark:text-on-secondary">
+          localresearcher
+        </span>
+<p class="font-body-lg text-xs text-on-surface-variant dark:text-outline text-center md:text-left">
+          © 2025 localresearcher Inc. Research-grade deterministic academic synthesis. Obsidian runtime.
+        </p>
+</div>
+<!-- Footer Links Array -->
+<nav class="flex flex-wrap justify-center items-center gap-6 text-sm font-code-inline">
+<a class="text-on-surface-variant dark:text-outline font-normal hover:text-secondary dark:hover:text-on-secondary transition-colors" href="#docs">Documentation</a>
+<a class="text-on-surface-variant dark:text-outline font-normal hover:text-secondary dark:hover:text-on-secondary transition-colors" href="#benchmarks">Benchmarks</a>
+<a class="text-on-surface-variant dark:text-outline font-normal hover:text-secondary dark:hover:text-on-secondary transition-colors" href="#arxiv">arXiv Pre-print</a>
+<a class="text-on-surface-variant dark:text-outline font-normal hover:text-secondary dark:hover:text-on-secondary transition-colors" href="#provenance">Deterministic Provenance</a>
+<a class="text-on-surface-variant dark:text-outline font-normal hover:text-secondary dark:hover:text-on-secondary transition-colors" href="https://github.com" rel="noreferrer" target="_blank">GitHub</a>
+<a class="text-on-surface-variant dark:text-outline font-normal hover:text-secondary dark:hover:text-on-secondary transition-colors" href="#status">System Status</a>
+</nav>
+</div>
+</footer>
+<!-- Interactive Logic for Package Manager Switcher & Copy Action -->
+<script>
+    const packageCommands = {
+      npm: 'npm i localresearcher',
+      pnpm: 'pnpm add localresearcher',
+      bun: 'bun add localresearcher'
+    };
+
+    let currentPkg = 'npm';
+
+    function setPkg(pkg) {
+      currentPkg = pkg;
+      document.getElementById('install-command').innerText = packageCommands[pkg];
+
+      ['npm', 'pnpm', 'bun'].forEach(p => {
+        const tab = document.getElementById(`tab-${p}`);
+        if (p === pkg) {
+          tab.className = 'text-secondary font-semibold border-b border-secondary pb-0.5';
+        } else {
+          tab.className = 'hover:text-secondary pb-0.5 text-on-surface-variant';
+        }
+      });
+    }
+
+    function copyCommand() {
+      const cmd = packageCommands[currentPkg];
+      navigator.clipboard.writeText(cmd).then(() => {
+        const copyLabel = document.getElementById('copy-label');
+        const copyBtn = document.getElementById('copy-btn');
+        copyLabel.innerText = 'Copied!';
+        copyBtn.classList.add('border-primary', 'text-primary');
+
+        setTimeout(() => {
+          copyLabel.innerText = 'Copy';
+          copyBtn.classList.remove('border-primary', 'text-primary');
+        }, 2000);
+      });
+    }
+  </script>
+</body></html>

@@ -2,9 +2,9 @@ import { SCRAPER_MAP } from "@/lib/scraper";
 
 export async function POST(request) {
   try {
-    const { keywords, source } = await request.json();
-    if (!keywords || !source) {
-      return new Response(JSON.stringify({ error: 'Missing "keywords" or "source"' }), { 
+    const { title, tags, timeline, source } = await request.json();
+    if ((!title && !tags) || !source) {
+      return new Response(JSON.stringify({ error: 'Missing "title", "tags", or "source"' }), { 
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -18,8 +18,9 @@ export async function POST(request) {
       });
     }
 
+    const options = { title, tags: tags || [], timeline };
     let allResults = [];
-    await scraper(keywords, 20, (batch) => { allResults.push(...batch); });
+    await scraper(options, 20, (batch) => { allResults.push(...batch); });
     
     return new Response(JSON.stringify({ success: true, count: allResults.length, results: allResults }), {
       headers: { 'Content-Type': 'application/json' },

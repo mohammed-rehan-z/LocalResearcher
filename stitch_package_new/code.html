@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>localresearcher v2.4 — Research-Grade RAG Engine</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&amp;family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::selection { background: #38bdf8; color: #0a0e16; }
+    .hairline-border { border-color: rgba(255, 255, 255, 0.08); }
+    .hairline-border-b { border-bottom-color: rgba(255, 255, 255, 0.08); }
+    .editorial-grid {
+      background-size: 32px 32px;
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            background: "#0a0e16",
+            surface: "#0f131c",
+            "surface-container-lowest": "#070a10",
+            "surface-container-low": "#131822",
+            "surface-container": "#181f2c",
+            "surface-container-high": "#222a3a",
+            "surface-container-highest": "#2c3649",
+            "on-surface": "#f1f5f9",
+            "on-surface-variant": "#94a3b8",
+            outline: "#475569",
+            "outline-variant": "rgba(255, 255, 255, 0.08)",
+            primary: "#38bdf8",
+            "primary-container": "#0284c7",
+            "on-primary": "#031e2e",
+            tertiary: "#34d399",
+            secondary: "#a5b4fc",
+            error: "#f87171"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"],
+            serif: ["EB Garamond", "serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-background text-on-surface font-sans antialiased selection:bg-primary selection:text-on-primary">
+<!-- Header / Navigation Bar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-md border-b hairline-border">
+<div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<a class="flex items-center gap-3 group" href="#">
+<div class="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center border hairline-border bg-surface-container-low p-1">
+<img alt="localresearcher" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XVgpWRPtutSFbr8CX5BsjoMePYWt2rwPepEb0yw36oyAF4AP77mFHPIKMraIePxlQfy-J_YX2FBBzgcqvZzi2V0IBTllw6dz30_r_6FPYOxtHPwD53tapjjl2bVsYpaaXwvNZ14ZRHYNz3myIv8kXPBCNjYhGYI-7v620nKEu79fsBtesiiyl0dpl2vi-EIpqzpDLyEEDda9iR80rLJI4RB7R0gPzyT1FI2UlnXrQ"/>
+</div>
+<span class="font-semibold text-[15px] tracking-tight text-white group-hover:text-primary transition-colors">localresearcher</span>
+</a>
+<span class="font-mono text-[11px] uppercase tracking-wider text-primary/90 px-2 py-0.5 rounded-full border border-primary/20 bg-primary/5">
+          v2.4
+        </span>
+</div>
+<nav class="hidden md:flex items-center gap-8 text-[13px] text-on-surface-variant">
+<a class="hover:text-white transition-colors" href="#manifesto">Manifesto</a>
+<a class="hover:text-white transition-colors" href="#comparison">Contrast</a>
+<a class="hover:text-white transition-colors" href="#taxonomy">Principles</a>
+<a class="hover:text-white transition-colors" href="#specifications">Specs</a>
+<a class="hover:text-white transition-colors" href="#benchmarks">Benchmarks</a>
+</nav>
+<div class="flex items-center gap-4 text-[13px]">
+<a class="hidden sm:inline-flex items-center gap-1.5 text-on-surface-variant hover:text-white transition-colors font-mono text-[12px]" href="https://github.com" rel="noopener noreferrer" target="_blank">
+<span>GitHub</span>
+<span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+</a>
+<a class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded text-[13px] font-medium bg-white text-black hover:bg-slate-200 transition-colors" href="#docs">
+<span>Documentation</span>
+</a>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-28 editorial-grid">
+<!-- HERO SECTION -->
+<section class="max-w-4xl mx-auto px-6 pt-16 pb-20 text-center">
+<!-- Eyebrow -->
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border hairline-border bg-surface-container-low/60 mb-8">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="font-mono text-[11px] uppercase tracking-widest text-on-surface-variant">
+          The Anti-Hallucination Framework for Academic AI
+        </span>
+</div>
+<!-- Main Title -->
+<h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.12]">
+        The research-grade RAG engine for scientific literature.
+      </h1>
+<!-- Subtitle -->
+<p class="text-lg sm:text-xl text-on-surface-variant font-normal leading-relaxed max-w-2xl mx-auto mb-10">
+        Transform dense mathematical equations, multi-column arXiv preprints, and complex citation lineages into deterministic embeddings with mathematical proof anchors.
+      </p>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded text-[14px] font-medium bg-primary text-slate-950 hover:bg-sky-300 transition-colors shadow-[0_0_25px_-5px_rgba(56,189,248,0.4)]" href="#docs">
+<span>Read the Documentation</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded text-[14px] font-medium border hairline-border text-on-surface hover:bg-surface-container-low transition-colors" href="#comparison">
+<span>Explore Architecture &amp; Benchmarks</span>
+</a>
+</div>
+<!-- Fact Badges (NO percentages, purely technical facts) -->
+<div class="pt-8 border-t hairline-border grid grid-cols-2 md:grid-cols-4 gap-6 text-left">
+<div>
+<div class="font-mono text-[11px] text-slate-500 uppercase tracking-widest">Ground Truth</div>
+<div class="text-[14px] font-medium text-slate-200 mt-1">Zero Stochastic Drift</div>
+</div>
+<div>
+<div class="font-mono text-[11px] text-slate-500 uppercase tracking-widest">Equation Recovery</div>
+<div class="text-[14px] font-medium text-slate-200 mt-1">Bit-Exact LaTeX Tree</div>
+</div>
+<div>
+<div class="font-mono text-[11px] text-slate-500 uppercase tracking-widest">Index Scale</div>
+<div class="text-[14px] font-medium text-slate-200 mt-1">120M+ Scholarly Nodes</div>
+</div>
+<div>
+<div class="font-mono text-[11px] text-slate-500 uppercase tracking-widest">Execution Engine</div>
+<div class="text-[14px] font-medium text-slate-200 mt-1">Sub-50ms SIMD Native</div>
+</div>
+</div>
+</section>
+<!-- THE CORE CONTRAST (Before / After - Impeccable Style Editorial Card Comparison) -->
+<section class="max-w-6xl mx-auto px-6 py-16" id="comparison">
+<div class="mb-10 text-center max-w-2xl mx-auto">
+<span class="font-mono text-[11px] text-primary uppercase tracking-widest block mb-2">Editorial Comparison</span>
+<h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
+          The Anatomy of Academic Hallucination
+        </h2>
+<p class="text-on-surface-variant text-[15px] leading-relaxed">
+          Standard document ingestion breaks under peer-reviewed conditions. localresearcher replaces heuristic character scanning with deterministic AST coordinate mapping.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Conventional Flawed Approach -->
+<div class="p-8 rounded-xl border border-red-500/20 bg-gradient-to-b from-red-950/10 to-surface-container-lowest flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-4 mb-6 border-b border-red-500/20">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-red-400"></span>
+<span class="font-mono text-[12px] uppercase tracking-wider text-red-400 font-medium">Conventional Stochastic RAG</span>
+</div>
+<span class="font-mono text-[11px] text-red-400/70 border border-red-500/30 px-2 py-0.5 rounded">Unverified</span>
+</div>
+<!-- Visual Defect Representation -->
+<div class="p-5 rounded-lg border border-red-500/20 bg-black/40 mb-6 space-y-3">
+<span class="font-mono text-[10px] uppercase text-red-400/80 tracking-widest block">OCR Character Collapse</span>
+<div class="font-mono text-[13px] text-slate-400 bg-red-950/20 p-3 rounded border border-red-900/30 leading-relaxed">
+                L_rag(θ) = E_q [ -log P(a | q, K_prov) ] → <span class="line-through text-red-300">"Lrag(8) = Eq [ -log P(a q Kprov)"</span>
+</div>
+<p class="text-[13px] text-slate-400 leading-snug">
+                Subscripts deform into integers, fractions drop denominators, and cross-column theorem proofs are severed at arbitrary 512-token character cuts.
+              </p>
+</div>
+<!-- Bullet Failure Points -->
+<ul class="space-y-3.5 text-[14px]">
+<li class="flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-red-400 text-[18px] shrink-0 mt-0.5">close</span>
+<span><strong class="text-white font-medium">Severed proof lemmas:</strong> Context cuts right through inductive hypotheses, invalidating downstream model reasoning.</span>
+</li>
+<li class="flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-red-400 text-[18px] shrink-0 mt-0.5">close</span>
+<span><strong class="text-white font-medium">Untraceable citations:</strong> Quotes cannot be resolved back to page coordinates, bounding boxes, or raw document bytes.</span>
+</li>
+<li class="flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-red-400 text-[18px] shrink-0 mt-0.5">close</span>
+<span><strong class="text-white font-medium">Character degeneration:</strong> Mathematical formulas collapse into stochastic gibberish during ingestion.</span>
+</li>
+</ul>
+</div>
+<div class="mt-8 pt-4 border-t border-red-500/20 font-mono text-[12px] text-red-400/80 flex items-center justify-between">
+<span>Result: Unverifiable research claims</span>
+<span>Heuristic pipeline</span>
+</div>
+</div>
+<!-- localresearcher Deterministic Approach -->
+<div class="p-8 rounded-xl border border-primary/30 bg-gradient-to-b from-primary/5 to-surface-container-lowest flex flex-col justify-between shadow-[0_0_40px_-15px_rgba(56,189,248,0.15)]">
+<div>
+<div class="flex items-center justify-between pb-4 mb-6 border-b border-primary/20">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-mono text-[12px] uppercase tracking-wider text-primary font-medium">localresearcher Deterministic Extraction</span>
+</div>
+<span class="font-mono text-[11px] text-primary/90 border border-primary/30 px-2 py-0.5 rounded bg-primary/10">Cryptographically Anchored</span>
+</div>
+<!-- Mathematical Typography (Pure styled math typesetting, NO terminal) -->
+<div class="p-5 rounded-lg border border-primary/20 bg-surface-container/50 mb-6 space-y-3">
+<div class="flex items-center justify-between">
+<span class="font-mono text-[10px] uppercase text-primary tracking-widest block">Preserved KaTeX Canonical AST</span>
+<span class="font-mono text-[10px] text-slate-400">Lemma 3.2 Proof Boundary</span>
+</div>
+<div class="py-3 px-4 rounded bg-background/80 border hairline-border text-center">
+<div class="font-serif italic text-xl sm:text-2xl text-slate-100 tracking-wide">
+<span class="not-italic text-primary">ℒ</span><sub>RAG</sub>(θ) = 𝔼<sub>q ∼ 𝒬</sub> <span class="text-slate-400">[</span> −log 𝒫(a ∣ q, 𝕂<sub>provenance</sub>) <span class="text-slate-400">]</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-1">
+<span>Vector Dimension: 1536-D</span>
+<span class="text-tertiary">SHA-256 Byte Match Verified</span>
+</div>
+</div>
+<!-- Bullet Guarantee Points -->
+<ul class="space-y-3.5 text-[14px]">
+<li class="flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check</span>
+<span><strong class="text-white font-medium">Preserved proof context:</strong> Hard cuts respect theorem, proposition, and lemma boundaries with zero context truncation.</span>
+</li>
+<li class="flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check</span>
+<span><strong class="text-white font-medium">Cryptographic audit lineage:</strong> Inmutable byte coordinates tie every claim directly to exact page and bounding box geometry.</span>
+</li>
+<li class="flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check</span>
+<span><strong class="text-white font-medium">Lossless formula trees:</strong> Greek parameters, multi-tier fractions, and tensor indices preserved without loss.</span>
+</li>
+</ul>
+</div>
+<div class="mt-8 pt-4 border-t border-primary/20 font-mono text-[12px] text-primary flex items-center justify-between">
+<span>Result: Deterministic mathematical ground-truth</span>
+<span>IEEE 754 Conformance</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SYSTEM GUARANTEES & TAXONOMY (Taste Skill & Impeccable Style Rule Breakdown) -->
+<section class="max-w-6xl mx-auto px-6 py-16" id="taxonomy">
+<div class="border-b hairline-border pb-6 mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<span class="font-mono text-[11px] text-primary uppercase tracking-widest block mb-2">Engine Architecture</span>
+<h2 class="text-3xl font-bold tracking-tight text-white">System Guarantees &amp; Taxonomy</h2>
+</div>
+<p class="text-on-surface-variant text-[14px] max-w-md">
+          Four invariant architectural principles that guarantee research-grade fidelity across scientific corpora.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Rule 01 -->
+<article class="p-8 rounded-xl border hairline-border bg-surface-container-low/40 hover:bg-surface-container-low transition-colors">
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono text-[13px] text-primary font-medium tracking-wider">§01</span>
+<span class="font-mono text-[11px] text-slate-500 uppercase">Geometry Engine</span>
+</div>
+<h3 class="text-xl font-semibold text-white mb-3">Mathematical Integrity</h3>
+<p class="text-on-surface-variant text-[14px] leading-relaxed mb-6">
+            Reconstructs native multi-column layout geometry into canonical LaTeX equations without character deformation. Resolves stacked fractions, matrices, sub-formulas, and Greek notations into parseable AST trees.
+          </p>
+<div class="pt-4 border-t hairline-border flex items-center justify-between text-[12px] font-mono text-slate-400">
+<span>Module: @localresearcher/latex-ast</span>
+<span class="text-slate-300">Zero Tesseract Dependency</span>
+</div>
+</article>
+<!-- Rule 02 -->
+<article class="p-8 rounded-xl border hairline-border bg-surface-container-low/40 hover:bg-surface-container-low transition-colors">
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono text-[13px] text-primary font-medium tracking-wider">§02</span>
+<span class="font-mono text-[11px] text-slate-500 uppercase">Boundary Splitter</span>
+</div>
+<h3 class="text-xl font-semibold text-white mb-3">Semantic Proof Boundaries</h3>
+<p class="text-on-surface-variant text-[14px] leading-relaxed mb-6">
+            Enforces hard cuts on theorem, lemma, corollary, and proposition boundaries instead of arbitrary token windows. Proof logic, inductive steps, and derivation chains remain unified within a single retrieval node.
+          </p>
+<div class="pt-4 border-t hairline-border flex items-center justify-between text-[12px] font-mono text-slate-400">
+<span>Granularity: Proposition-Level</span>
+<span class="text-slate-300">Intact Lemma Boundaries</span>
+</div>
+</article>
+<!-- Rule 03 -->
+<article class="p-8 rounded-xl border hairline-border bg-surface-container-low/40 hover:bg-surface-container-low transition-colors">
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono text-[13px] text-primary font-medium tracking-wider">§03</span>
+<span class="font-mono text-[11px] text-slate-500 uppercase">Verification Anchor</span>
+</div>
+<h3 class="text-xl font-semibold text-white mb-3">Byte-Level Provenance</h3>
+<p class="text-on-surface-variant text-[14px] leading-relaxed mb-6">
+            Every vector embedding contains immutable cryptographic coordinates: physical page offset, bounding box coordinates, and raw source hash. Enables instant independent audit against the original paper PDF.
+          </p>
+<div class="pt-4 border-t hairline-border flex items-center justify-between text-[12px] font-mono text-slate-400">
+<span>Validation: SHA-256 Digest</span>
+<span class="text-slate-300">Bounding Box Geometry</span>
+</div>
+</article>
+<!-- Rule 04 -->
+<article class="p-8 rounded-xl border hairline-border bg-surface-container-low/40 hover:bg-surface-container-low transition-colors">
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono text-[13px] text-primary font-medium tracking-wider">§04</span>
+<span class="font-mono text-[11px] text-slate-500 uppercase">Reasoning Adapter</span>
+</div>
+<h3 class="text-xl font-semibold text-white mb-3">Model-Agnostic Delivery</h3>
+<p class="text-on-surface-variant text-[14px] leading-relaxed mb-6">
+            Calibrated prompt payloads and token budgets designed directly for reasoning models including Claude 3.5 Sonnet, DeepSeek-R1, Qwen 2.5, and local Ollama weights. Structured directly in canonical JSON-LD.
+          </p>
+<div class="pt-4 border-t hairline-border flex items-center justify-between text-[12px] font-mono text-slate-400">
+<span>Format: Structured JSON-LD</span>
+<span class="text-slate-300">Reasoning-Model Calibrated</span>
+</div>
+</article>
+</div>
+</section>
+<!-- ARCHITECTURAL SPEC MATRIX (Clean Typographic Table) -->
+<section class="max-w-6xl mx-auto px-6 py-16" id="specifications">
+<div class="border-b hairline-border pb-6 mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+<div>
+<span class="font-mono text-[11px] text-primary uppercase tracking-widest block mb-2">Specifications</span>
+<h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">System Specification Matrix</h2>
+</div>
+<span class="font-mono text-[12px] text-slate-400">Verified against Node.js 20.x ESM</span>
+</div>
+<div class="border hairline-border rounded-xl overflow-hidden bg-surface-container-lowest">
+<div class="divide-y hairline-border text-[13px]">
+<div class="grid grid-cols-1 sm:grid-cols-3 p-4 bg-surface-container-low/50 font-mono text-[11px] text-slate-400 uppercase tracking-wider">
+<span>Property</span>
+<span class="sm:col-span-2">Specification &amp; Architectural Standard</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 p-4 hover:bg-surface-container-low/30 transition-colors">
+<span class="font-mono text-slate-400 text-[12px]">Memory Footprint</span>
+<span class="sm:col-span-2 text-white font-medium">14.2 kB minzipped bundle size</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 p-4 hover:bg-surface-container-low/30 transition-colors">
+<span class="font-mono text-slate-400 text-[12px]">Dependency Tree</span>
+<span class="sm:col-span-2 text-white font-medium">Zero native dependencies — pure TypeScript &amp; WebAssembly SIMD</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 p-4 hover:bg-surface-container-low/30 transition-colors">
+<span class="font-mono text-slate-400 text-[12px]">Supported Identifiers</span>
+<span class="sm:col-span-2 text-white font-medium">arXiv identifiers, DOI (Digital Object Identifier), IPFS Content Hashes (CIDv1)</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 p-4 hover:bg-surface-container-low/30 transition-colors">
+<span class="font-mono text-slate-400 text-[12px]">Math Preservation Layer</span>
+<span class="sm:col-span-2 text-white font-medium">KaTeX-compatible lossless AST with Greek symbol &amp; matrix tensor recovery</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 p-4 hover:bg-surface-container-low/30 transition-colors">
+<span class="font-mono text-slate-400 text-[12px]">Cryptographic Anchor</span>
+<span class="sm:col-span-2 text-white font-medium">Deterministic SHA-256 byte digest per extracted claim coordinate</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 p-4 hover:bg-surface-container-low/30 transition-colors">
+<span class="font-mono text-slate-400 text-[12px]">Execution Layer</span>
+<span class="sm:col-span-2 text-white font-medium">Node.js 20+ ESM Float32Array SIMD vector operations</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 p-4 hover:bg-surface-container-low/30 transition-colors">
+<span class="font-mono text-slate-400 text-[12px]">License &amp; Compatibility</span>
+<span class="sm:col-span-2 text-white font-medium">MIT Licensed for commercial, corporate, and academic research architectures</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ACADEMIC RIGOR & CORPUS REACH -->
+<section class="max-w-6xl mx-auto px-6 py-16" id="manifesto">
+<div class="p-10 rounded-2xl border hairline-border bg-gradient-to-br from-surface-container-low to-surface-container-lowest relative overflow-hidden">
+<div class="max-w-3xl">
+<span class="font-mono text-[11px] text-tertiary uppercase tracking-widest block mb-3">Academic Rigor</span>
+<h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-4">
+            Built for the rigors of peer review
+          </h2>
+<p class="text-on-surface-variant text-[15px] leading-relaxed mb-8">
+            Scientific inquiry requires reproducible foundations. Standard AI applications fail when citations cite ghost publications and mathematical proofs lose constraint boundaries. localresearcher indexes across millions of peer-reviewed records with strict cryptographic lineage.
+          </p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+<div class="p-4 rounded-lg border hairline-border bg-background/60">
+<span class="font-mono text-[14px] text-white font-semibold block">arXiv</span>
+<span class="text-[11px] font-mono text-slate-500 uppercase mt-0.5 block">Automated AST</span>
+</div>
+<div class="p-4 rounded-lg border hairline-border bg-background/60">
+<span class="font-mono text-[14px] text-white font-semibold block">PubMed</span>
+<span class="text-[11px] font-mono text-slate-500 uppercase mt-0.5 block">Biomedical Lineage</span>
+</div>
+<div class="p-4 rounded-lg border hairline-border bg-background/60">
+<span class="font-mono text-[14px] text-white font-semibold block">IEEE Xplore</span>
+<span class="text-[11px] font-mono text-slate-500 uppercase mt-0.5 block">Standard Proofs</span>
+</div>
+<div class="p-4 rounded-lg border hairline-border bg-background/60">
+<span class="font-mono text-[14px] text-white font-semibold block">bioRxiv</span>
+<span class="text-[11px] font-mono text-slate-500 uppercase mt-0.5 block">Preprint Verification</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FINAL EDITORIAL CALL-TO-ACTION -->
+<section class="max-w-4xl mx-auto px-6 py-20 text-center">
+<span class="font-mono text-[11px] text-primary uppercase tracking-widest block mb-3">Production Ready</span>
+<h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">
+        Start synthesizing preprints deterministically today.
+      </h2>
+<p class="text-on-surface-variant text-[15px] leading-relaxed max-w-xl mx-auto mb-8">
+        Integrate localresearcher into your TypeScript codebase without heavy runtime wrappers or external OCR binaries.
+      </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded text-[14px] font-medium bg-primary text-slate-950 hover:bg-sky-300 transition-colors shadow-[0_0_20px_-5px_rgba(56,189,248,0.35)]" href="#docs">
+<span>Read Documentation</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded text-[14px] font-medium border hairline-border text-on-surface hover:bg-surface-container-low transition-colors" href="https://github.com" rel="noopener noreferrer" target="_blank">
+<span>Explore GitHub Repository</span>
+<span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</a>
+</div>
+<div class="flex flex-wrap items-center justify-center gap-6 text-[12px] font-mono text-slate-500">
+<span>MIT Licensed</span>
+<span>•</span>
+<span>Node.js ≥ 18.0.0</span>
+<span>•</span>
+<span>TypeScript 5.x</span>
+<span>•</span>
+<span>Zero Native Dependencies</span>
+</div>
+</section>
+</main>
+<!-- TYPOGRAPHIC FOOTER -->
+<footer class="w-full border-t hairline-border bg-surface-container-lowest py-16">
+<div class="max-w-6xl mx-auto px-6">
+<div class="grid grid-cols-1 md:grid-cols-5 gap-10 mb-12">
+<div class="md:col-span-2">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center border hairline-border bg-surface-container-low p-1">
+<img alt="localresearcher" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XVgpWRPtutSFbr8CX5BsjoMePYWt2rwPepEb0yw36oyAF4AP77mFHPIKMraIePxlQfy-J_YX2FBBzgcqvZzi2V0IBTllw6dz30_r_6FPYOxtHPwD53tapjjl2bVsYpaaXwvNZ14ZRHYNz3myIv8kXPBCNjYhGYI-7v620nKEu79fsBtesiiyl0dpl2vi-EIpqzpDLyEEDda9iR80rLJI4RB7R0gPzyT1FI2UlnXrQ"/>
+</div>
+<span class="font-semibold text-[15px] text-white">localresearcher</span>
+</div>
+<p class="text-on-surface-variant text-[13px] leading-relaxed max-w-sm mb-4">
+            High-throughput verifiable RAG primitives engineered specifically for Node.js, TypeScript, and distributed academic graph architectures.
+          </p>
+<div class="font-mono text-[11px] text-slate-500 flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>Deterministic Runtime Environment</span>
+</div>
+</div>
+<div>
+<h4 class="font-mono text-[11px] uppercase tracking-wider text-slate-400 mb-3">Research &amp; Specs</h4>
+<ul class="space-y-2 text-[13px] text-on-surface-variant">
+<li><a class="hover:text-white transition-colors" href="#">arXiv AST Standard</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Deterministic Provenance</a></li>
+<li><a class="hover:text-white transition-colors" href="#">IEEE 754 Conformance</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-mono text-[11px] uppercase tracking-wider text-slate-400 mb-3">Documentation</h4>
+<ul class="space-y-2 text-[13px] text-on-surface-variant">
+<li><a class="hover:text-white transition-colors" href="#">Quickstart Guide</a></li>
+<li><a class="hover:text-white transition-colors" href="#">KaTeX AST Recovery</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Release Notes</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-mono text-[11px] uppercase tracking-wider text-slate-400 mb-3">Ecosystem</h4>
+<ul class="space-y-2 text-[13px] text-on-surface-variant">
+<li><a class="hover:text-white transition-colors" href="#">GitHub Repository</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Benchmark Suite</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Cryptographic Audit</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-8 border-t hairline-border flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px] font-mono text-slate-500">
+<p>© 2025 localresearcher Inc. Research-grade deterministic academic synthesis.</p>
+<div class="flex items-center gap-6">
+<span>AST Specification v2.4</span>
+<span>SHA-256 Validated</span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

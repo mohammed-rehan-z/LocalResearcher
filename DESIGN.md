@@ -1,175 +1,133 @@
 ---
-name: ScholarSync Academic Dark
+name: LocalResearcher Anti-Slop
 colors:
-  surface: '#0d0d0d'
-  surface-dim: '#161616'
-  surface-bright: '#1a1a1a'
-  surface-container-lowest: '#0a0a0a'
-  surface-container-low: '#111111'
-  surface-container: '#161616'
-  surface-container-high: '#1e1e1e'
-  surface-container-highest: '#242424'
-  on-surface: '#f0f0ef'
-  on-surface-variant: '#9a9a96'
-  inverse-surface: '#f0f0ef'
-  inverse-on-surface: '#111111'
-  outline: '#2e2e2e'
-  outline-variant: '#252525'
-  surface-tint: '#a3a3a0'
-  primary: '#f0f0ef'
-  on-primary: '#0d0d0d'
-  primary-container: '#1e1e1e'
-  on-primary-container: '#c8c8c4'
-  inverse-primary: '#1a1a1a'
-  secondary: '#7c6f5e'
-  on-secondary: '#f0f0ef'
-  secondary-container: '#2a2520'
-  on-secondary-container: '#c4b49e'
-  tertiary: '#5c7a5c'
-  on-tertiary: '#f0f0ef'
-  tertiary-container: '#1e2b1e'
-  on-tertiary-container: '#8fb48f'
-  error: '#f87171'
-  on-error: '#0d0d0d'
-  error-container: '#2d1515'
-  on-error-container: '#f87171'
-  background: '#0d0d0d'
-  on-background: '#f0f0ef'
-  surface-variant: '#1e1e1e'
+  surface: '#f5f4f2'
+  surface-dim: '#e5e4e2'
+  surface-bright: '#ffffff'
+  surface-container-lowest: '#ffffff'
+  surface-container-low: '#fdfcfb'
+  surface-container: '#f5f4f2'
+  surface-container-high: '#ebeae8'
+  surface-container-highest: '#e1e0de'
+  on-surface: '#0a0a0a'
+  on-surface-variant: '#4b5563'
+  inverse-surface: '#0a0a0a'
+  inverse-on-surface: '#ffffff'
+  outline: '#d1d5db'
+  outline-variant: '#e5e7eb'
+  surface-tint: '#ff6b00'
+  primary: '#ff6b00'
+  on-primary: '#ffffff'
+  primary-container: '#ff8a33'
+  on-primary-container: '#4d1e00'
+  inverse-primary: '#ff8a33'
+  secondary: '#0a0a0a'
+  on-secondary: '#ffffff'
+  secondary-container: '#27272a'
+  on-secondary-container: '#f4f4f5'
+  tertiary: '#06b6d4'
+  on-tertiary: '#ffffff'
+  tertiary-container: '#67e8f9'
+  on-tertiary-container: '#083344'
+  error: '#ef4444'
+  on-error: '#ffffff'
+  error-container: '#fecaca'
+  on-error-container: '#7f1d1d'
+  primary-fixed: '#ff8a33'
+  primary-fixed-dim: '#ff6b00'
+  on-primary-fixed: '#4d1e00'
+  on-primary-fixed-variant: '#803200'
+  secondary-fixed: '#27272a'
+  secondary-fixed-dim: '#0a0a0a'
+  on-secondary-fixed: '#ffffff'
+  on-secondary-fixed-variant: '#f4f4f5'
+  tertiary-fixed: '#67e8f9'
+  tertiary-fixed-dim: '#06b6d4'
+  on-tertiary-fixed: '#083344'
+  on-tertiary-fixed-variant: '#155e75'
+  background: '#f5f4f2'
+  on-background: '#0a0a0a'
+  surface-variant: '#ebeae8'
 typography:
-  display-lg:
+  display-hero:
     fontFamily: Geist
-    fontSize: 56px
-    fontWeight: '500'
-    lineHeight: '1.05'
-    letterSpacing: -0.03em
-  display-lg-mobile:
-    fontFamily: Geist
-    fontSize: 36px
-    fontWeight: '500'
-    lineHeight: '1.1'
-    letterSpacing: -0.02em
+    fontSize: 72px
+    fontWeight: '600'
+    lineHeight: 80px
+    letterSpacing: -0.04em
   headline-lg:
-    fontFamily: Geist
-    fontSize: 36px
-    fontWeight: '500'
-    lineHeight: '1.15'
-    letterSpacing: -0.02em
-  headline-md:
-    fontFamily: Geist
-    fontSize: 24px
-    fontWeight: '500'
-    lineHeight: '1.3'
+    fontFamily: Georgia, serif
+    fontSize: 32px
+    fontWeight: '400'
+    lineHeight: 40px
     letterSpacing: -0.01em
-  headline-sm:
-    fontFamily: Geist
-    fontSize: 18px
-    fontWeight: '500'
-    lineHeight: '1.4'
   body-lg:
     fontFamily: Geist
-    fontSize: 17px
+    fontSize: 16px
     fontWeight: '400'
-    lineHeight: '1.65'
-  body-md:
-    fontFamily: Geist
-    fontSize: 15px
-    fontWeight: '400'
-    lineHeight: '1.6'
-  label-md:
-    fontFamily: Geist Mono
-    fontSize: 11px
+    lineHeight: 26px
+    letterSpacing: -0.005em
+  code-inline:
+    fontFamily: JetBrains Mono
+    fontSize: 14px
     fontWeight: '500'
-    lineHeight: '1'
-    letterSpacing: 0.08em
-  label-sm:
-    fontFamily: Geist Mono
-    fontSize: 10px
-    fontWeight: '500'
-    lineHeight: '1'
-    letterSpacing: 0.1em
+    lineHeight: 20px
+    letterSpacing: 0em
 rounded:
-  sm: 0.375rem
-  DEFAULT: 0.75rem
+  sm: 0.25rem
+  DEFAULT: 0.5rem
   md: 1rem
   lg: 1.5rem
   xl: 2rem
   full: 9999px
 spacing:
-  unit: 8px
-  container-max: 1400px
-  gutter: 24px
-  margin-desktop: 64px
-  margin-mobile: 20px
-  section-gap: 96px
+  space-md: 1rem
+  space-lg: 1.5rem
+  space-xl: 2rem
+  space-4xl: 6rem
 ---
 
-## Brand & Style
-ScholarSync is a dark-mode-first academic intelligence platform. The design personality is **precise, authoritative, quietly premium** — think a redacted government archive meets a well-lit research terminal. The visual language strips all decorative noise. Every element earns its place through function or hierarchy.
+# Design System: LocalResearcher Anti-Slop
 
-The aesthetic is **Dark Utilitarian Scholarly**: deep black (#0D0D0D) surfaces, off-white (#F0F0EF) primary text, with a single warm sand accent reserved exclusively for active states and primary CTAs. No gradients. No glassmorphism on scrolling content. No AI-purple anywhere.
+## 1. Visual Theme & Atmosphere
+A restrained, gallery-airy interface with confident asymmetric layouts and fluid spring-physics motion. The atmosphere is clinical yet warm — like a well-lit architecture studio or high-end consumer hardware brand. High-contrast typography drives the visual hierarchy against a clean stone substrate.
 
-## Colors
-The palette is built on near-black surfaces with high-contrast off-white text:
+## 2. Color Palette & Roles
+- **Stone Canvas** (#F5F4F2) — Primary background surface
+- **Pure Surface** (#FFFFFF) — Card and container fill with glassmorphic transparency
+- **Obsidian Ink** (#0A0A0A) — Primary text, buttons, deep depth
+- **Muted Slate** (#4B5563) — Secondary text, descriptions, metadata
+- **Verified Orange** (#FF6B00) — Single high-chroma accent for CTAs, active states, focus rings. 
 
-- **Void Black** (#0D0D0D) — Primary background. Not pure black — avoids harsh digital feel.
-- **Surface Low** (#111111) — Card and container fill. 1 step above background to establish elevation.
-- **Surface Medium** (#161616) — Slightly elevated panels, code blocks, secondary containers.
-- **Surface High** (#1E1E1E) — Active states, hover states, selected rows.
-- **Chalk White** (#F0F0EF) — Primary text. Off-white avoids pure white harshness on dark backgrounds.
-- **Ash** (#9A9A96) — Secondary text, metadata, captions, placeholders.
-- **Graphite** (#2E2E2E) — Structural borders, table dividers, 1px hairlines.
-- **Sand Warm** (#C4B49E) — Single accent. Used ONLY on primary CTAs, active nav indicators, focus rings, and import buttons. No secondary use.
+## 3. Typography Rules
+- **Display:** Geist — Track-tight, controlled scale, weight-driven hierarchy. Extremely tight letter-spacing for large headlines.
+- **Subheadline:** Georgia (Serif) — Used exclusively for the immediate subheadline below the hero to provide editorial contrast.
+- **Body:** Geist — Relaxed leading, 65ch max-width, neutral secondary color.
+- **Mono:** JetBrains Mono — For code, metadata, terminal commands, and telemetry.
+- **Banned:** Inter, generic system fonts for premium contexts. No neon/purple text.
 
-## Typography
-Pure sans-serif stack. No serif — this is a software dashboard, not an editorial publication.
+## 4. Component Stylings
+* **Buttons:** Flat, no outer glow. Tactile -1px translate on active. Obsidian fill for primary, ghost/outline for secondary.
+* **Cards:** Generously rounded corners (1.5rem - 2rem). Diffused whisper shadow. Glassmorphic frosted glass effects used over light noise backgrounds.
+* **Inputs:** Label above, error below. Focus ring in accent color. No floating labels.
+* **Empty States:** Composed compositions indicating how to populate data.
+* **Code Terminal:** Dark obsidian boxes with monospace text and copy-to-clipboard micro-interactions.
 
-- **Display/Headlines**: Geist — tight tracking (-0.02em to -0.03em), medium weight (500). Scale: 56px display, 36px h1, 24px h2, 18px h3.
-- **Body**: Geist — relaxed leading (1.6-1.65). 15-17px for comfortable reading in dense academic content. Secondary text in Ash (#9A9A96).
-- **Mono**: Geist Mono — for all metadata (paper IDs, dates, page numbers, citation badges, source tags, code blocks). 10-11px, tracked wide (0.08-0.1em), all-caps uppercase.
-- **Banned**: Inter (too generic), any serif font (wrong context for a software dashboard).
+## 5. Layout Principles
+Grid-first responsive architecture. Asymmetric splits for Hero sections.
+Strict single-column collapse below 768px. Max-width containment (1280px).
+No flexbox percentage math. Generous internal padding.
 
-## Layout & Spacing
-- **Contained max-width**: 1400px centered, 64px desktop margins, 20px mobile margins.
-- **Section rhythm**: 96px vertical gaps between major sections.
-- **Grid**: 12-column CSS Grid, never flexbox percentage math.
-- **Hero**: Left-aligned split layout (never centered). Large headline on the left 7 columns, supporting visual or stat panel on the right 5 columns.
-- **Feature Grids**: Asymmetric bento. Never 3 equal columns. Mix: col-span-7 + col-span-5, col-span-5 + col-span-7, col-span-12 full-width breakout.
-- **Mobile**: All multi-column layouts collapse to single column at 768px. No horizontal overflow.
+## 6. Motion & Interaction
+Spring physics for all interactive elements. Staggered cascade reveals.
+Hardware-accelerated transforms only.
 
-## Component Stylings
-- **Buttons Primary**: Sand Warm accent (#C4B49E) background, Void Black text. Rounded-full pill shape. Generous padding (px-6 py-3). Tactile -1px translate on active. No glow, no shadow.
-- **Buttons Secondary**: Transparent with 1px Graphite (#2E2E2E) border and Ash text. Same pill shape. Hover: Surface High (#1E1E1E) fill.
-- **Cards**: Surface Low (#111111) fill. 1px Graphite border. Rounded-lg (1.5rem). No shadow — elevation implied by color delta from background. Hover: Surface High fill transition.
-- **Inputs**: Surface Medium (#161616) fill, 1px Graphite border. Rounded-md (1rem). Focus: 1px Sand Warm border ring. Label always above, never floating. Placeholder text in Ash.
-- **Tags / Source Badges**: Geist Mono, 10px, uppercase, wide tracking. Surface Medium background, Ash text, 1px Graphite border. Rounded-sm (0.375rem).
-- **Table Rows**: Hairline border-bottom (Graphite). No card containers around tables. Hover: Surface High fill transition. Selected: Surface High fill + Sand Warm left 2px accent border.
-- **Loaders**: Skeletal shimmers matching exact row/card dimensions. No spinner circles.
-- **Empty States**: Centered composition with a large Geist Mono label and clear action button. Not just "No data found."
-- **Citation Badges**: Inline pill, Geist Mono, 9px, Surface Medium background, Sand Warm text. Subtle — never distracting.
-
-## Motion & Interaction
-- **Entry animations**: Opacity 0 → 1, translateY 16px → 0. Duration 500ms. Ease: cubic-bezier(0.16, 1, 0.3, 1). `whileInView` with `once: true`. Never `window.scroll`.
-- **Stagger**: Lists and bento grids stagger at 60ms intervals per item. Parent `variants` with `staggerChildren: 0.06`.
-- **View transitions**: AnimatePresence with `mode="wait"`. Exiting view fades out (200ms), entering view fades + slides up (400ms).
-- **Hover states**: Cards scale to `scale(1.005)` and border transitions to Surface High color over 200ms. No translate-y on cards (too bouncy for a research tool).
-- **Button press**: `whileTap: { scale: 0.97 }`. Immediate, tactile.
-- **Table row hover**: Background transition 150ms. No scale.
-- **Performance**: Animate exclusively via `transform` and `opacity`. `will-change: transform` only on actively animating elements.
-
-## Anti-Patterns (Banned)
-- No emojis anywhere in the UI
-- No Inter, Roboto, Open Sans, or any default system fonts
-- No serif fonts — this is a software dashboard, not a publication
-- No neon/outer glow shadows (box-shadow with colored blur)
-- No pure black (#000000) or pure white (#FFFFFF)
-- No centered hero sections (split/left-aligned only)
-- No 3 equal-column feature card grids
-- No warm beige/brass/cream backgrounds (premium-consumer cliché, wrong context)
-- No AI purple gradient anything
-- No overlapping elements — clean spatial separation always
-- No "Elevate", "Seamless", "Next-Gen", "Unleash", or any AI copywriting clichés
-- No decorative scroll arrows, bouncing chevrons, or "scroll to explore" filler
-- No fake round numbers (99.9%, 50k+) without real data backing
-- No broken image URLs — use picsum.photos/seed/{context}/{w}/{h} or omit images entirely
-- No heavy drop shadows on dark surfaces (they create muddy depth)
+## 7. Anti-Patterns (Banned)
+- No emojis anywhere.
+- No Inter font.
+- No pure black (#000000).
+- No neon glows or AI "purple" branding.
+- No 3-column equal grids.
+- No AI copywriting clichés ("Elevate", "Seamless", "Unleash", "Next-Gen").
+- No filler UI text: "Scroll to explore", "Swipe down", scroll arrows, bouncing chevrons.
+- No overlapping elements — clean spatial separation always.
