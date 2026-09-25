@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# LocalResearcher
+
+An open-source, deterministic academic intelligence platform designed for deep literature synthesis and zero-hallucination extraction.
+
+LocalResearcher parses peer-reviewed PDFs client-side, embeds document chunks into a local vector database using Transformer models, and strictly injects mathematically relevant contexts into the LLM payload to ensure accurate, non-hallucinated research summaries.
+
+## Key Features
+
+- **Client-Side Document Parsing:** Leverages local WebAssembly pipelines (PDF.js) to parse structure without sending your private PDFs to a cloud server.
+- **Deterministic RAG (Retrieval Augmented Generation):** Uses `@xenova/transformers` (`all-MiniLM-L6-v2`) inside the browser for embedding and vectorizing document chunks.
+- **Zero-Hallucination Philosophy:** The prompt engineering strictly enforces that the LLM only answers from the explicitly extracted semantic chunks.
+- **Performance Optimized:** AI dependencies (like LangChain) are heavily code-split and dynamically imported for instantaneous initial page loads.
+- **Offline-First Indexing:** IndexedDB is used for caching embedded AST maps, meaning once a document is vectorized, it remains instantly accessible locally.
+
+## Installation
+
+Install the latest package directly via npm:
+
+```bash
+npm install localresearcher@latest
+```
+
+Or clone the bleeding-edge repository:
+
+```bash
+git clone https://github.com/your-org/localresearcher.git
+cd localresearcher
+npm install
+```
 
 ## Getting Started
 
-First, run the development server:
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Usage (Library Example)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Initialize the deterministic vector index and ingest a PDF stream in your own Node/Next applications:
 
-## Learn More
+```javascript
+import { LocalResearcher } from 'localresearcher';
 
-To learn more about Next.js, take a look at the following resources:
+const engine = new LocalResearcher({
+  embedder: 'Xenova/all-MiniLM-L6-v2',
+  storage: 'indexeddb'
+});
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+// Ingest PDF and build AST mapping
+await engine.ingest('./attention-is-all-you-need.pdf');
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Architecture & Aesthetic
 
-## Deploy on Vercel
+The UI is built strictly with Next.js, TailwindCSS, and Framer Motion. It heavily enforces a "pure black" (#000000) design aesthetic with high-contrast text and a focus on utilitarian typography (Inter + Playfair Display) to reduce sensory noise while doing academic research.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
