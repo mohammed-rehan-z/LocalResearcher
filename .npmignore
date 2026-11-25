@@ -1,0 +1,17 @@
+node_modules/
+.next/
+.gemini/
+.agents/
+stitch_package_new/
+public/models/
+AGENTS.md
+CLAUDE.md
+DESIGN.md
+IMPLEMENTATION_PLAN.md
+design_b64.txt
+download.htm
+test-mdpi.mjs
+skills-lock.json
+*.log
+.env
+.env.local

@@ -1,0 +1,37 @@
+import { SCRAPER_MAP } from "@/lib/scraper";
+
+export const dynamic = "force-dynamic";
+export const maxDuration = 60;
+
+export async function POST(request) {
+  try {
+    const { title, tags, timeline, source } = await request.json();
+    if ((!title && !tags) || !source) {
+      return new Response(JSON.stringify({ error: 'Missing "title", "tags", or "source"' }), { 
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const scraper = SCRAPER_MAP[source.toLowerCase()];
+    if (!scraper) {
+      return new Response(JSON.stringify({ error: 'Unknown source' }), { 
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const options = { title, tags: tags || [], timeline };
+    let allResults = [];
+    await scraper(options, 20, (batch) => { allResults.push(...batch); });
+    
+    return new Response(JSON.stringify({ success: true, count: allResults.length, results: allResults }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: e.message }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+}
